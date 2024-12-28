@@ -1,0 +1,12 @@
+aiohttp==3.10.1
+backoff==2.2.1
+fastapi==0.109.2
+langchain==0.3.11
+langchain-core==0.3.24
+langchain-google-genai==2.0.6
+playwright==1.47.0
+pydantic==2.10.3
+python-decouple==3.8
+python-multipart==0.0.9
+starlette==0.36.3
+uvicorn==0.27.1
