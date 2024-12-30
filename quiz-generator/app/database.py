@@ -3,7 +3,7 @@ from sqlmodel import create_engine, Session, SQLModel
 from decouple import config
 
 
-sqlite_file_name = config("SQLITE_FILE_NAME")
+sqlite_file_name = config("QUIZ_GENERATOR_SQLITE_FILE_NAME")
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 connect_args = {"check_same_thread": False}
