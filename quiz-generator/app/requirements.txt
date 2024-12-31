@@ -2,11 +2,12 @@ alembic==1.14.0
 email-validator==2.2.0
 fastapi==0.115.6
 fastapi-login==1.10.2
-langchain==0.3.11
+jinja2==3.1.5
+langchain==0.3.13
 langchain-google-genai==2.0.7
 passlib==1.7.4
 playwright==1.49.1
-pydantic==2.10.3
+pydantic==2.10.4
 python-decouple==3.8
 python-multipart==0.0.19
 sqlmodel==0.0.22
