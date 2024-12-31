@@ -1,0 +1,58 @@
+<!-- quiz_detail.html -->
+{% extends "base.html" %}
+
+{% block title %}Quiz Detail{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Quiz #{{ quiz.id }}</h3>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+        <div class="prose max-w-none">
+            {{ quiz.content }}
+        </div>
+    </div>
+</div>
+
+<div class="mt-8">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">Questions</h2>
+    
+    {% for question in quiz.questions %}
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                Question {{ loop.index }}
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                {{ question.question }}
+            </p>
+        </div>
+        <div class="border-t border-gray-200">
+            <ul class="divide-y divide-gray-200">
+                {% for option in question.options %}
+                <li class="px-4 py-4 sm:px-6 {% if option.is_correct %}bg-green-50{% endif %}">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-900">
+                            {{ option.option }}
+                        </span>
+                        {% if option.is_correct %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Correct Answer
+                        </span>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="mt-6">
+        <a href="/quizzes" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Back to All Quizzes
+        </a>
+    </div>
+</div>
+{% endblock %}

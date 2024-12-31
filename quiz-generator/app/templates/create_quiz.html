@@ -1,0 +1,59 @@
+<!-- create_quiz.html -->
+{% extends "base.html" %}
+
+{% block title %}Create New Quiz{% endblock %}
+
+{% block content %}
+<div class="md:grid md:grid-cols-3 md:gap-6">
+    <div class="md:col-span-1">
+        <div class="px-4 sm:px-0">
+            <h3 class="text-lg font-medium leading-6 text-gray-900">Create New Quiz</h3>
+            <p class="mt-1 text-sm text-gray-600">
+                Provide the content for your quiz and specify the number of questions and options.
+            </p>
+        </div>
+    </div>
+    <div class="mt-5 md:mt-0 md:col-span-2">
+        <form method="POST" action="/quizzes/">
+            <div class="shadow sm:rounded-md sm:overflow-hidden">
+                <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+                    <div>
+                        <label for="content" class="block text-sm font-medium text-gray-700">Quiz Content</label>
+                        <div class="mt-1">
+                            <textarea id="content" name="content" rows="10" 
+                                class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md" 
+                                required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label for="number_of_questions" class="block text-sm font-medium text-gray-700">
+                                Number of Questions
+                            </label>
+                            <input type="number" name="number_of_questions" id="number_of_questions" min="1"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                required>
+                        </div>
+
+                        <div>
+                            <label for="number_of_options" class="block text-sm font-medium text-gray-700">
+                                Options per Question
+                            </label>
+                            <input type="number" name="number_of_options" id="number_of_options" min="2"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                required>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                    <button type="submit" 
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Create Quiz
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
