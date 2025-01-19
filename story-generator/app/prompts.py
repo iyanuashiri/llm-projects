@@ -2,6 +2,7 @@ import asyncio
 
 from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_aws import ChatBedrock
 from langchain.output_parsers import PydanticOutputParser
 from decouple import config
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -34,6 +35,19 @@ async def generate_story_content(idea: str, genre: str, unique_insight: str, str
 
     llm = ChatGoogleGenerativeAI(google_api_key=config("GEMINI_API_KEY"), temperature=0.7, model='gemini-pro')
 
+    # Initialize Bedrock client using boto3
+    # bedrock_runtime = boto3.client(
+    #     service_name="bedrock-runtime",
+    #     region_name=config("AWS_REGION_NAME"),  # Replace with your desired AWS region
+    #     aws_access_key_id=config("AWS_ACCESS_KEY_ID"),
+    #     aws_secret_access_key=config("AWS_SECRET_ACCESS_KEY"),
+    # )
+
+    # # We will use Claude model here as an example
+    # llm = ChatBedrock(
+    #     model_id="anthropic.claude-v2", client=bedrock_runtime, model_kwargs={"max_tokens_to_sample": 500}
+    # )
+    
     generated_story = generate_story_prompt | llm | generated_story_output_parser
 
     result = await generated_story.ainvoke({
