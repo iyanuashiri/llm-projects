@@ -1,6 +1,10 @@
 # llm-projects
 
 
+## Check my blog
+1. https://iyanuashiri.hashnode.dev/
+
+
 ## How to run migrations
 1. install alembic
 ```
