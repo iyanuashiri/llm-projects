@@ -43,11 +43,9 @@ async def extract_job_information(html_document, apply_url):
     html_document_output_parser = PydanticOutputParser(pydantic_object=JobInformationSchema)
     html_document_format_instructions = html_document_output_parser.get_format_instructions()
     html_document_template = """
-    Extract the following fields: job_description, job_title, company_name, company_website, location_type, the List of location, 
-    commitment, and the apply_url in this html_document. 
+    Extract the following fields: job_description, job_title, company_name, company_website, 
+    and the apply_url in this html_document. 
     The job_description should not output html tags. 
-    The location_type is either "remote" or "onsite" or "hybrid".
-    The commiment is either "full-time" or "part-time" or "contract" or "internship".
     
     Think step-by-step. Remove all html tags in the job_description field.
     

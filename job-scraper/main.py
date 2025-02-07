@@ -34,9 +34,7 @@ class URL(BaseModel):
 async def scrape_job_description(url: URL, response: Response):
     
     url = url.url
-    if 'greenhouse' not in url:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"data": "Error", "status": status.HTTP_400_BAD_REQUEST, "message": "This is not a greenhouse career page. Nothing to scrape."}
+    
     scraper1 = WebScraper(url=url, is_paginated=True)
     documents = await scraper1.scrape()
     page_tasks = []
