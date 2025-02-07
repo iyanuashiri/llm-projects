@@ -1,0 +1,6 @@
+fastapi==0.101
+wordcloud==1.9.2
+pandas==2.0.3
+pinecone-client==2.2.2
+python-decouple==3.8
+sentence-transformers==2.2.2
