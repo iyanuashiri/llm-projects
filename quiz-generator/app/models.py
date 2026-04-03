@@ -27,10 +27,11 @@ class UserPublic(UserBase):
 
 class Quiz(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    topic: str | None = Field(default=None, max_length=500)  # set when generated from a topic
     content: str = Field(max_length=100000)
     number_of_questions: int
     number_of_options: int
-    
+
     questions: list["Question"] = Relationship(back_populates="quiz")
     
     
