@@ -1,40 +1,64 @@
-<!-- list_quizzes.html -->
 {% extends "base.html" %}
-
 {% block title %}All Quizzes{% endblock %}
 
+{% block styles %}
+.quiz-card {
+    background: #1a1826;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+}
+.quiz-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); border-color: rgba(129,140,248,0.3); }
+.badge { display: inline-block; background: rgba(129,140,248,0.15); border: 1px solid rgba(129,140,248,0.3); color: #a5b4fc; font-size: 0.75rem; font-weight: 500; padding: 0.2rem 0.6rem; border-radius: 9999px; }
+{% endblock %}
+
 {% block content %}
-<div class="px-4 sm:px-6 lg:px-8">
-    <div class="sm:flex sm:items-center">
-        <div class="sm:flex-auto">
-            <h1 class="text-xl font-semibold text-gray-900">All Quizzes</h1>
-        </div>
+<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2.5rem;">
+    <div>
+        <h1 class="brand" style="font-size:2rem; font-weight:700; margin-bottom:0.25rem;">All Quizzes</h1>
+        <p style="color:#6b7280;">
+            {% if quizzes %}{{ quizzes|length }} quiz{{ "zes" if quizzes|length != 1 else "" }} available{% else %}No quizzes yet{% endif %}
+        </p>
     </div>
-    
-    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {% for quiz in quizzes %}
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Quiz #{{ quiz.id }}</h3>
-                <div class="mt-2 max-w-xl text-sm text-gray-500">
-                    <p>{{ quiz.content[:200] }}...</p>
-                </div>
-                <div class="mt-3 text-sm text-gray-500">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mr-2">
-                        {{ quiz.number_of_questions }} Questions
-                    </span>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        {{ quiz.number_of_options }} Options
-                    </span>
-                </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-4 sm:px-6">
-                <a href="/quizzes/{{ quiz.id }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50">
-                    View Quiz
-                </a>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+    <a href="/quizzes/new" style="background:#4f46e5; color:#fff; font-weight:600; padding:0.75rem 1.5rem; border-radius:0.75rem; text-decoration:none; transition:background 0.2s; white-space:nowrap;">
+        + Create New Quiz
+    </a>
 </div>
+
+{% if quizzes %}
+<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem;">
+    {% for quiz in quizzes %}
+    <a href="/quizzes/{{ quiz.id }}" class="quiz-card">
+        <div style="padding:1.5rem; flex:1;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+                <span class="badge">{{ quiz.questions|length }} Questions</span>
+                <span style="color:#4b5563; font-size:0.75rem;">#{{ quiz.id }}</span>
+            </div>
+            <p style="color:#d1d5db; font-size:0.9rem; line-height:1.6; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;">
+                {{ quiz.content[:300] }}
+            </p>
+        </div>
+        <div style="padding:1rem 1.5rem; border-top:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:space-between;">
+            <span style="color:#6b7280; font-size:0.8rem;">{{ quiz.number_of_options }} options per question</span>
+            <span style="color:#818cf8; font-size:0.875rem; font-weight:500;">Take Quiz →</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+{% else %}
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8rem 0; text-align:center;">
+    <div style="font-size:4rem; margin-bottom:1.5rem;">📭</div>
+    <h2 class="brand" style="font-size:2rem; font-weight:700; margin-bottom:0.75rem;">No quizzes yet</h2>
+    <p style="color:#6b7280; font-size:1.1rem; margin-bottom:2rem; max-width:28rem;">Create your first quiz — paste any text and let AI do the rest.</p>
+    <a href="/quizzes/new" style="background:#4f46e5; color:#fff; font-weight:600; padding:1rem 2rem; border-radius:0.75rem; text-decoration:none; font-size:1.1rem;">
+        Create Your First Quiz →
+    </a>
+</div>
+{% endif %}
 {% endblock %}

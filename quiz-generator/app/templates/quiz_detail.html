@@ -1,58 +1,200 @@
-<!-- quiz_detail.html -->
 {% extends "base.html" %}
+{% block title %}Quiz #{{ quiz.id }}{% endblock %}
 
-{% block title %}Quiz Detail{% endblock %}
+{% block styles %}
+.meta-card { background: #1a1826; border: 1px solid rgba(255,255,255,0.07); border-radius: 1rem; padding: 1.5rem; }
+.badge { display: inline-block; background: rgba(129,140,248,0.15); border: 1px solid rgba(129,140,248,0.3); color: #a5b4fc; font-size: 0.75rem; font-weight: 500; padding: 0.2rem 0.6rem; border-radius: 9999px; }
+
+.question-card { background: #1a1826; border: 1px solid rgba(255,255,255,0.07); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+.question-num { color: #6b7280; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+.question-text { color: #f1f0f8; font-size: 1.05rem; font-weight: 500; margin-bottom: 1.25rem; line-height: 1.5; }
+
+.option-btn {
+    width: 100%; text-align: left; padding: 0.875rem 1rem;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.625rem; color: #d1d5db; font-size: 0.95rem;
+    cursor: pointer; transition: all 0.15s; margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-family: 'Inter', sans-serif;
+}
+.option-btn:hover:not(:disabled) { background: rgba(79,70,229,0.15); border-color: rgba(79,70,229,0.4); color: #fff; }
+.option-btn.correct { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.5); color: #6ee7b7; }
+.option-btn.wrong { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+.option-btn.reveal-correct { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #6ee7b7; }
+.option-letter { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; flex-shrink: 0; }
+
+.score-bar { background: #1a1826; border: 1px solid rgba(255,255,255,0.07); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem; display: none; }
+.score-bar.visible { display: block; }
+.progress-track { background: rgba(255,255,255,0.08); border-radius: 9999px; height: 8px; overflow: hidden; margin-top: 0.75rem; }
+.progress-fill { height: 100%; border-radius: 9999px; background: #4f46e5; transition: width 0.4s ease; }
+{% endblock %}
 
 {% block content %}
-<div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900">Quiz #{{ quiz.id }}</h3>
-    </div>
-    <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
-        <div class="prose max-w-none">
-            {{ quiz.content }}
-        </div>
-    </div>
-</div>
 
-<div class="mt-8">
-    <h2 class="text-lg font-medium text-gray-900 mb-4">Questions</h2>
-    
-    {% for question in quiz.questions %}
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
-        <div class="px-4 py-5 sm:px-6 bg-gray-50">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">
-                Question {{ loop.index }}
-            </h3>
-            <p class="mt-1 max-w-2xl text-sm text-gray-500">
-                {{ question.question }}
-            </p>
-        </div>
-        <div class="border-t border-gray-200">
-            <ul class="divide-y divide-gray-200">
-                {% for option in question.options %}
-                <li class="px-4 py-4 sm:px-6 {% if option.is_correct %}bg-green-50{% endif %}">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-900">
-                            {{ option.option }}
-                        </span>
-                        {% if option.is_correct %}
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Correct Answer
-                        </span>
-                        {% endif %}
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-    {% endfor %}
-
-    <div class="mt-6">
-        <a href="/quizzes" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            Back to All Quizzes
+<!-- Header -->
+<div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2rem;">
+    <div>
+        <a href="/quizzes" style="color:#6b7280; font-size:0.875rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; margin-bottom:1rem; transition:color 0.2s;" onmouseover="this.style.color='#d1d5db'" onmouseout="this.style.color='#6b7280'">
+            ← All Quizzes
         </a>
+    <h1 class="brand" style="font-size:2rem; font-weight:700; margin-bottom:0.5rem;">
+        {% if topic %}{{ topic }}{% else %}Quiz #{{ quiz.id }}{% endif %}
+    </h1>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+        <span class="badge">{{ quiz.questions|length }} Questions</span>
+        <span class="badge">{{ quiz.number_of_options }} Options</span>
+        {% if topic %}<span class="badge" style="background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.3); color:#6ee7b7;">✨ AI Generated</span>{% endif %}
+    </div>
+    </div>
+    <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <button onclick="revealAll()" style="background:transparent; border:1px solid rgba(255,255,255,0.15); color:#9ca3af; padding:0.6rem 1.25rem; border-radius:0.625rem; cursor:pointer; font-size:0.875rem; transition:all 0.2s; font-family:'Inter',sans-serif;" onmouseover="this.style.borderColor='rgba(255,255,255,0.3)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.15)';this.style.color='#9ca3af'">
+            Show All Answers
+        </button>
+        <button onclick="resetQuiz()" style="background:transparent; border:1px solid rgba(255,255,255,0.15); color:#9ca3af; padding:0.6rem 1.25rem; border-radius:0.625rem; cursor:pointer; font-size:0.875rem; transition:all 0.2s; font-family:'Inter',sans-serif;" onmouseover="this.style.borderColor='rgba(255,255,255,0.3)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.15)';this.style.color='#9ca3af'">
+            ↺ Reset
+        </button>
     </div>
 </div>
+
+<!-- Score tracker -->
+<div class="score-bar" id="score-bar">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="color:#d1d5db; font-weight:500;">Your Score</span>
+        <span id="score-text" style="color:#818cf8; font-weight:700; font-size:1.1rem;">0 / {{ quiz.questions|length }}</span>
+    </div>
+    <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+</div>
+
+<!-- Content preview -->
+<details style="margin-bottom:2rem;">
+    <summary style="cursor:pointer; color:#6b7280; font-size:0.875rem; padding:0.75rem 1rem; background:#1a1826; border:1px solid rgba(255,255,255,0.07); border-radius:0.75rem; list-style:none; display:flex; align-items:center; justify-content:space-between;">
+        <span>📄 View Source Content</span>
+        <span style="font-size:0.75rem;">▼</span>
+    </summary>
+    <div style="background:#1a1826; border:1px solid rgba(255,255,255,0.07); border-top:none; border-radius:0 0 0.75rem 0.75rem; padding:1.25rem; color:#9ca3af; font-size:0.875rem; line-height:1.7; max-height:200px; overflow-y:auto;">
+        {{ quiz.content }}
+    </div>
+</details>
+
+<!-- Questions -->
+<div id="questions-container">
+{% for question in quiz.questions %}
+{% set qidx = loop.index0 %}
+<div class="question-card" id="q-{{ qidx }}">
+    <p class="question-num">Question {{ loop.index }} of {{ quiz.questions|length }}</p>
+    <p class="question-text">{{ question.question }}</p>
+    <div>
+        {% set letters = ['A', 'B', 'C', 'D', 'E', 'F'] %}
+        {% for option in question.options %}
+        <button class="option-btn"
+            data-correct="{{ 'true' if option.is_correct else 'false' }}"
+            onclick="selectOption(this, {{ qidx }})">
+            <span class="option-letter">{{ letters[loop.index0] }}</span>
+            {{ option.option }}
+        </button>
+        {% endfor %}
+    </div>
+    <div id="feedback-{{ qidx }}" style="margin-top:0.75rem; font-size:0.875rem; display:none;"></div>
+</div>
+{% endfor %}
+</div>
+
+<!-- Completion message -->
+<div id="completion" style="display:none; text-align:center; padding:3rem; background:#1a1826; border:1px solid rgba(255,255,255,0.07); border-radius:1rem; margin-top:1rem;">
+    <div style="font-size:3rem; margin-bottom:1rem;" id="completion-emoji">🎉</div>
+    <h2 class="brand" style="font-size:1.75rem; font-weight:700; margin-bottom:0.5rem;">Quiz Complete!</h2>
+    <p id="completion-text" style="color:#9ca3af; font-size:1.1rem; margin-bottom:1.5rem;"></p>
+    <button onclick="resetQuiz()" style="background:#4f46e5; color:#fff; font-weight:600; padding:0.75rem 2rem; border-radius:0.75rem; border:none; cursor:pointer; font-size:1rem; font-family:'Inter',sans-serif;">
+        Try Again
+    </button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const totalQuestions = {{ quiz.questions|length }};
+    let answered = new Set();
+    let correct = 0;
+
+    function selectOption(btn, qIndex) {
+        const card = document.getElementById('q-' + qIndex);
+        const allBtns = card.querySelectorAll('.option-btn');
+        const isCorrect = btn.dataset.correct === 'true';
+        const feedback = document.getElementById('feedback-' + qIndex);
+
+        // Disable all options for this question
+        allBtns.forEach(b => {
+            b.disabled = true;
+            if (b.dataset.correct === 'true') {
+                b.classList.add('correct');
+            }
+        });
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            feedback.innerHTML = '<span style="color:#6ee7b7;">✓ Correct!</span>';
+            correct++;
+        } else {
+            btn.classList.add('wrong');
+            feedback.innerHTML = '<span style="color:#fca5a5;">✗ Incorrect</span>';
+        }
+        feedback.style.display = 'block';
+
+        if (!answered.has(qIndex)) {
+            answered.add(qIndex);
+            updateScore();
+        }
+
+        if (answered.size === totalQuestions) {
+            setTimeout(showCompletion, 600);
+        }
+    }
+
+    function updateScore() {
+        const scoreBar = document.getElementById('score-bar');
+        scoreBar.classList.add('visible');
+        document.getElementById('score-text').textContent = correct + ' / ' + totalQuestions;
+        const pct = (answered.size / totalQuestions) * 100;
+        document.getElementById('progress-fill').style.width = pct + '%';
+    }
+
+    function revealAll() {
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.disabled = true;
+            if (btn.dataset.correct === 'true') btn.classList.add('reveal-correct');
+        });
+        document.querySelectorAll('[id^="feedback-"]').forEach(f => f.style.display = 'none');
+    }
+
+    function resetQuiz() {
+        answered.clear();
+        correct = 0;
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('correct', 'wrong', 'reveal-correct');
+        });
+        document.querySelectorAll('[id^="feedback-"]').forEach(f => {
+            f.style.display = 'none';
+            f.innerHTML = '';
+        });
+        document.getElementById('score-bar').classList.remove('visible');
+        document.getElementById('score-text').textContent = '0 / ' + totalQuestions;
+        document.getElementById('progress-fill').style.width = '0%';
+        document.getElementById('completion').style.display = 'none';
+        document.getElementById('questions-container').style.display = 'block';
+    }
+
+    function showCompletion() {
+        const pct = Math.round((correct / totalQuestions) * 100);
+        const emoji = pct === 100 ? '🏆' : pct >= 70 ? '🎉' : pct >= 40 ? '📚' : '💪';
+        const msg = pct === 100 ? 'Perfect score! Outstanding!' : pct >= 70 ? `Great job! You scored ${correct} out of ${totalQuestions} (${pct}%)` : `You scored ${correct} out of ${totalQuestions} (${pct}%). Keep practicing!`;
+        document.getElementById('completion-emoji').textContent = emoji;
+        document.getElementById('completion-text').textContent = msg;
+        document.getElementById('completion').style.display = 'block';
+        document.getElementById('questions-container').style.display = 'none';
+    }
+</script>
 {% endblock %}

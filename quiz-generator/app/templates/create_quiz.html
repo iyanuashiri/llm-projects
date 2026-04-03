@@ -1,59 +1,129 @@
-<!-- create_quiz.html -->
 {% extends "base.html" %}
+{% block title %}Create Quiz{% endblock %}
 
-{% block title %}Create New Quiz{% endblock %}
+{% block styles %}
+.form-input {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #e8e8f0;
+    width: 100%;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+.form-input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+.form-label { display: block; font-size: 0.875rem; font-weight: 500; color: #d1d5db; margin-bottom: 0.5rem; }
+.form-hint { color: #4b5563; font-size: 0.8rem; margin-top: 0.4rem; }
+
+.tab-btn {
+    flex: 1; padding: 0.75rem 1rem; border: none; cursor: pointer;
+    font-size: 0.9rem; font-weight: 500; font-family: 'Inter', sans-serif;
+    border-radius: 0.5rem; transition: all 0.2s; color: #6b7280;
+    background: transparent;
+}
+.tab-btn.active { background: #4f46e5; color: #fff; }
+.tab-btn:not(.active):hover { color: #d1d5db; background: rgba(255,255,255,0.05); }
+
+.spinner { border: 3px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+{% endblock %}
 
 {% block content %}
-<div class="md:grid md:grid-cols-3 md:gap-6">
-    <div class="md:col-span-1">
-        <div class="px-4 sm:px-0">
-            <h3 class="text-lg font-medium leading-6 text-gray-900">Create New Quiz</h3>
-            <p class="mt-1 text-sm text-gray-600">
-                Provide the content for your quiz and specify the number of questions and options.
-            </p>
-        </div>
+<div style="max-width:680px; margin:0 auto;">
+    <a href="/quizzes" style="color:#6b7280; font-size:0.875rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; margin-bottom:2rem; transition:color 0.2s;" onmouseover="this.style.color='#d1d5db'" onmouseout="this.style.color='#6b7280'">
+        ← Back to Quizzes
+    </a>
+
+    <div style="margin-bottom:2rem;">
+        <h1 class="brand" style="font-size:2.25rem; font-weight:700; margin-bottom:0.5rem;">Create a Quiz</h1>
+        <p style="color:#6b7280;">Generate from a topic or paste your own content.</p>
     </div>
-    <div class="mt-5 md:mt-0 md:col-span-2">
-        <form method="POST" action="/quizzes/">
-            <div class="shadow sm:rounded-md sm:overflow-hidden">
-                <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
-                    <div>
-                        <label for="content" class="block text-sm font-medium text-gray-700">Quiz Content</label>
-                        <div class="mt-1">
-                            <textarea id="content" name="content" rows="10" 
-                                class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md" 
-                                required></textarea>
-                        </div>
-                    </div>
 
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <label for="number_of_questions" class="block text-sm font-medium text-gray-700">
-                                Number of Questions
-                            </label>
-                            <input type="number" name="number_of_questions" id="number_of_questions" min="1"
-                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                required>
-                        </div>
+    <form method="POST" action="/quizzes/" id="create-form">
+        <input type="hidden" name="mode" id="mode-input" value="topic">
 
-                        <div>
-                            <label for="number_of_options" class="block text-sm font-medium text-gray-700">
-                                Options per Question
-                            </label>
-                            <input type="number" name="number_of_options" id="number_of_options" min="2"
-                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                required>
-                        </div>
-                    </div>
+        <div style="background:#1a1826; border:1px solid rgba(255,255,255,0.07); border-radius:1rem; padding:2rem; display:flex; flex-direction:column; gap:1.5rem;">
+
+            <!-- Tabs -->
+            <div style="display:flex; gap:0.5rem; background:rgba(255,255,255,0.04); border-radius:0.625rem; padding:0.25rem;">
+                <button type="button" class="tab-btn active" id="tab-topic" onclick="switchTab('topic')">
+                    ✨ Generate from Topic
+                </button>
+                <button type="button" class="tab-btn" id="tab-paste" onclick="switchTab('paste')">
+                    📋 Paste Content
+                </button>
+            </div>
+
+            <!-- Topic mode -->
+            <div id="panel-topic">
+                <label class="form-label" for="topic">Topic or Idea</label>
+                <input class="form-input" type="text" id="topic" name="topic"
+                    placeholder="e.g. The French Revolution, Photosynthesis, Python decorators..."
+                    >
+                <p class="form-hint">AI will generate study content on this topic, then create quiz questions from it.</p>
+            </div>
+
+            <!-- Paste mode -->
+            <div id="panel-paste" style="display:none;">
+                <label class="form-label" for="content">Content to Quiz</label>
+                <textarea class="form-input" id="content" name="content" rows="10"
+                    placeholder="Paste any text here — an article, lecture notes, a book chapter, documentation..."></textarea>
+                <p class="form-hint">The more detailed the content, the better the questions.</p>
+            </div>
+
+            <!-- Shared params -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                <div>
+                    <label class="form-label" for="number_of_questions">Number of Questions</label>
+                    <input class="form-input" type="number" id="number_of_questions" name="number_of_questions"
+                        min="1" max="20" placeholder="5" required>
                 </div>
-                <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                    <button type="submit" 
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Create Quiz
-                    </button>
+                <div>
+                    <label class="form-label" for="number_of_options">Options per Question</label>
+                    <input class="form-input" type="number" id="number_of_options" name="number_of_options"
+                        min="2" max="6" placeholder="4" required>
                 </div>
             </div>
-        </form>
-    </div>
+
+            <button type="submit" id="submit-btn"
+                style="background:#4f46e5; color:#fff; font-weight:600; padding:1rem; border-radius:0.75rem; border:none; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; gap:0.75rem; transition:background 0.2s; width:100%;">
+                <span id="btn-text">🎯 Generate Quiz</span>
+                <span class="spinner" id="btn-spinner"></span>
+            </button>
+            <p style="text-align:center; color:#4b5563; font-size:0.8rem; margin-top:-0.5rem;" id="loading-hint">This may take a few seconds</p>
+        </div>
+    </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function switchTab(mode) {
+        document.getElementById('mode-input').value = mode;
+
+        document.getElementById('tab-topic').classList.toggle('active', mode === 'topic');
+        document.getElementById('tab-paste').classList.toggle('active', mode === 'paste');
+
+        document.getElementById('panel-topic').style.display = mode === 'topic' ? 'block' : 'none';
+        document.getElementById('panel-paste').style.display = mode === 'paste' ? 'block' : 'none';
+
+        // Toggle required
+        document.getElementById('topic').required = mode === 'topic';
+        document.getElementById('content').required = mode === 'paste';
+    }
+
+    // Init
+    switchTab('topic');
+
+    document.getElementById('create-form').addEventListener('submit', () => {
+        const mode = document.getElementById('mode-input').value;
+        document.getElementById('btn-text').textContent = mode === 'topic' ? 'Generating content & quiz...' : 'Generating quiz...';
+        document.getElementById('btn-spinner').style.display = 'block';
+        document.getElementById('submit-btn').disabled = true;
+        document.getElementById('submit-btn').style.opacity = '0.7';
+        document.getElementById('loading-hint').textContent = mode === 'topic' ? 'First generating content, then building your quiz...' : 'Building your quiz...';
+    });
+</script>
 {% endblock %}
