@@ -1,0 +1,34 @@
+# story-generator
+
+## Setup
+
+### virtual environment
+
+1. Clone the repository `git clone https://github.com/iyanuashiri/llm-projects.git`
+2. `cd story-generator`
+3. Create a virtual environment `python -m venv venv`
+4. Activate the virtual environment `venv\Scripts\activate` or `source venv/bin/activate` on Linux
+5. Install the requirements `pip install -r app/requirements.txt`
+6. Run the migrations `alembic upgrade head`
+7. Run the server `uvicorn app.main:app --reload`
+
+### uv
+
+1. Clone the repository `git clone https://github.com/iyanuashiri/llm-projects.git`
+2. `cd story-generator`
+3. `uv sync`
+4. `uv run alembic upgrade head`
+5. `uv run uvicorn app.main:app --reload`
+
+### docker
+
+1. Clone the repository `git clone https://github.com/iyanuashiri/llm-projects.git`
+2. `cd story-generator`
+3. `docker build -t story-generator .`
+4. `docker run --env-file .env -p 8000:8000 story-generator`
+
+## Run migrations
+
+1. `uv run alembic init alembic`
+2. `uv run alembic revision --autogenerate -m "message"`
+3. `uv run alembic upgrade head`
