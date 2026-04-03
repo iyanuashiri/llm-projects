@@ -1,0 +1,16 @@
+[project]
+name = "story-generator"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.18.4",
+    "boto3>=1.42.82",
+    "email-validator>=2.3.0",
+    "fastapi[standard]>=0.116.1",
+    "langchain>=0.3.27",
+    "langchain-google-genai>=2.1.10",
+    "python-decouple>=3.8",
+    "sqlmodel>=0.0.24",
+]
