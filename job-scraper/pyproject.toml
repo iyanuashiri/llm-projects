@@ -13,7 +13,7 @@ dependencies = [
     "pydantic>=2.12.5",
     "python-decouple>=3.8",
     "python-multipart>=0.0.22",
-    "requests>=2.32.0",
+    "requests>=2.33.1",
     "starlette>=1.0.0",
     "uvicorn>=0.43.0",
 ]
