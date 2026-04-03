@@ -172,3 +172,5 @@ cython_debug/
 
 storygenerator.db
 quizgenerator.db
+
+story_generator.db
