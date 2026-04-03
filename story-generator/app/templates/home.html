@@ -3,14 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story Generator</title>
+    <title>StoryForge — AI Story Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+        body { font-family: 'Inter', sans-serif; }
+        .hero-title { font-family: 'Playfair Display', serif; }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        }
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .glow {
+            text-shadow: 0 0 40px rgba(167, 139, 250, 0.5);
+        }
+        .genre-tag {
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-8">
-        <h1 class="text-3xl text-gray-800 mb-6">Welcome to the Story Generator!</h1>
-        <a href="/create" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-block mr-2">Create a New Story</a>
-        <a href="/stories" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">View Stories</a>
-    </div>
+<body class="bg-gray-950 text-white">
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 bg-gray-950 bg-opacity-80 backdrop-filter backdrop-blur-lg border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <span class="hero-title text-xl font-bold text-purple-400">StoryForge</span>
+            <div class="flex gap-4">
+                <a href="/stories" class="text-gray-400 hover:text-white text-sm transition-colors">Browse Stories</a>
+                <a href="/create" class="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                    Create Story
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="gradient-bg min-h-screen flex items-center pt-16">
+        <div class="max-w-6xl mx-auto px-6 py-24 text-center">
+            <div class="inline-flex items-center gap-2 bg-purple-900 bg-opacity-50 border border-purple-700 rounded-full px-4 py-1.5 text-purple-300 text-sm mb-8">
+                <span class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
+                Powered by Amazon Bedrock
+            </div>
+
+            <h1 class="hero-title text-6xl md:text-8xl font-black mb-6 leading-tight glow">
+                Your Story,<br>
+                <span class="text-purple-400">Brought to Life</span>
+            </h1>
+
+            <p class="text-gray-300 text-xl md:text-2xl max-w-2xl mx-auto mb-12 leading-relaxed">
+                Turn a simple idea into a fully crafted story. Choose your genre, structure, and perspective — let AI do the rest.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/create"
+                   class="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-all transform hover:scale-105 shadow-lg shadow-purple-900">
+                    Start Writing →
+                </a>
+                <a href="/stories"
+                   class="border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white font-semibold px-8 py-4 rounded-xl text-lg transition-all">
+                    View Stories
+                </a>
+            </div>
+
+            <!-- Genre tags -->
+            <div class="flex flex-wrap justify-center gap-2 mt-16">
+                {% set genres = ["Fantasy", "Sci-Fi", "Mystery", "Thriller", "Romance", "Horror", "Historical", "Dystopian", "Comedy"] %}
+                {% for genre in genres %}
+                <span class="genre-tag text-purple-300 text-sm px-3 py-1 rounded-full">{{ genre }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="bg-gray-900 py-24">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="hero-title text-4xl font-bold mb-4">How It Works</h2>
+                <p class="text-gray-400 text-lg">Three steps from idea to story</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 rounded-2xl p-8 card-hover text-center">
+                    <div class="w-14 h-14 bg-purple-900 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6">💡</div>
+                    <h3 class="text-xl font-semibold mb-3">1. Share Your Idea</h3>
+                    <p class="text-gray-400 leading-relaxed">Describe your story concept — a sentence or a paragraph, whatever sparks the narrative.</p>
+                </div>
+
+                <div class="bg-gray-800 rounded-2xl p-8 card-hover text-center">
+                    <div class="w-14 h-14 bg-purple-900 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6">🎛️</div>
+                    <h3 class="text-xl font-semibold mb-3">2. Set the Parameters</h3>
+                    <p class="text-gray-400 leading-relaxed">Pick your genre, narrative structure, point of view, and number of characters.</p>
+                </div>
+
+                <div class="bg-gray-800 rounded-2xl p-8 card-hover text-center">
+                    <div class="w-14 h-14 bg-purple-900 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6">📖</div>
+                    <h3 class="text-xl font-semibold mb-3">3. Read Your Story</h3>
+                    <p class="text-gray-400 leading-relaxed">Get a fully generated, compelling story in seconds — ready to read, share, or build on.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="bg-gray-950 py-24">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="hero-title text-4xl font-bold mb-4">Everything You Need</h2>
+                <p class="text-gray-400 text-lg">Craft stories with full creative control</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 card-hover">
+                    <div class="text-3xl mb-4">🎭</div>
+                    <h3 class="text-xl font-semibold mb-2">12 Genres</h3>
+                    <p class="text-gray-400">From Fantasy and Sci-Fi to Magical Realism and Dystopian — every genre is covered.</p>
+                </div>
+
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 card-hover">
+                    <div class="text-3xl mb-4">🏗️</div>
+                    <h3 class="text-xl font-semibold mb-2">7 Story Structures</h3>
+                    <p class="text-gray-400">Linear, Hero's Journey, Three-Act, Save the Cat — choose the framework that fits your vision.</p>
+                </div>
+
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 card-hover">
+                    <div class="text-3xl mb-4">👁️</div>
+                    <h3 class="text-xl font-semibold mb-2">Multiple POVs</h3>
+                    <p class="text-gray-400">First person, third person omniscient, and more — control how the story is told.</p>
+                </div>
+
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 card-hover">
+                    <div class="text-3xl mb-4">⚡</div>
+                    <h3 class="text-xl font-semibold mb-2">Instant Generation</h3>
+                    <p class="text-gray-400">Powered by Amazon Bedrock — fast, reliable, and high-quality story output every time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="gradient-bg py-24">
+        <div class="max-w-3xl mx-auto px-6 text-center">
+            <h2 class="hero-title text-5xl font-black mb-6 glow">Ready to write?</h2>
+            <p class="text-gray-300 text-xl mb-10">Your next great story is one click away.</p>
+            <a href="/create"
+               class="bg-white text-gray-900 hover:bg-gray-100 font-bold px-10 py-4 rounded-xl text-lg transition-all transform hover:scale-105 inline-block shadow-xl">
+                Create Your Story →
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950 border-t border-gray-800 py-8">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span class="hero-title text-purple-400 font-bold">StoryForge</span>
+            <p class="text-gray-600 text-sm">Built with FastAPI &amp; Amazon Bedrock</p>
+            <div class="flex gap-6 text-sm text-gray-500">
+                <a href="/create" class="hover:text-gray-300 transition-colors">Create</a>
+                <a href="/stories" class="hover:text-gray-300 transition-colors">Stories</a>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>

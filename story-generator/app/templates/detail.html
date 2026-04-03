@@ -3,32 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story Detail</title>
+    <title>{{ story.idea[:50] }} — StoryForge</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f0e17;
+            color: #e8e8f0;
+            min-height: 100vh;
+        }
+        .hero-title { font-family: 'Playfair Display', serif; }
+        .story-body { font-family: 'Lora', serif; }
+
+        /* Nav */
+        .nav-bar {
+            position: fixed; top: 0; width: 100%; z-index: 50;
+            background: rgba(15, 14, 23, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .nav-inner {
+            max-width: 1152px; margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { font-family: 'Playfair Display', serif; color: #a78bfa; font-size: 1.25rem; font-weight: 700; text-decoration: none; }
+        .nav-links { display: flex; gap: 1rem; align-items: center; }
+        .nav-link { color: #9ca3af; font-size: 0.875rem; text-decoration: none; transition: color 0.2s; }
+        .nav-link:hover { color: #fff; }
+        .nav-btn {
+            background: #7c3aed; color: #fff; font-size: 0.875rem; font-weight: 500;
+            padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #6d28d9; }
+
+        /* Layout */
+        .page-wrap { max-width: 1152px; margin: 0 auto; padding: 7rem 1.5rem 6rem; }
+        .back-link { color: #6b7280; font-size: 0.875rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; transition: color 0.2s; }
+        .back-link:hover { color: #d1d5db; }
+
+        /* Grid */
+        .content-grid { display: grid; gap: 2.5rem; }
+        @media (min-width: 1024px) {
+            .content-grid { grid-template-columns: 1fr 2fr; }
+            .sidebar { order: 1; }
+            .story-main { order: 2; }
+        }
+
+        /* Sidebar */
+        .meta-card {
+            background: #1a1826;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: sticky;
+            top: 5rem;
+        }
+        .meta-label { font-size: 0.7rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem; }
+        .meta-value { color: #e2e8f0; font-size: 0.875rem; line-height: 1.6; }
+        .meta-section { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 1rem; margin-top: 1rem; }
+        .meta-header { font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.25rem; }
+        .genre-badge {
+            display: inline-block;
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            color: #c4b5fd;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+        .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        /* Generate button */
+        .generate-btn {
+            width: 100%; margin-top: 1.5rem;
+            background: #7c3aed; color: #fff; font-weight: 600;
+            padding: 0.75rem; border-radius: 0.75rem;
+            border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            transition: background 0.2s; font-size: 1rem;
+        }
+        .generate-btn:hover { background: #6d28d9; }
+        .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Story content */
+        .story-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem; font-weight: 700;
+            color: #f1f0f8;
+            line-height: 1.3;
+            margin-bottom: 2rem;
+        }
+        @media (min-width: 768px) { .story-title { font-size: 2.5rem; } }
+
+        #story-content { line-height: 1.9; font-size: 1.1rem; }
+        #story-content p { color: #d4d2e3; margin-bottom: 1.25rem; }
+        #story-content h2 {
+            font-family: 'Playfair Display', serif;
+            color: #a78bfa;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Bottom actions */
+        .story-actions { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-wrap: wrap; gap: 1rem; }
+        .regen-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            border: 1px solid #7c3aed; color: #c4b5fd;
+            font-weight: 500; padding: 0.75rem 1.5rem; border-radius: 0.75rem;
+            background: transparent; cursor: pointer; transition: all 0.2s; font-size: 0.95rem;
+        }
+        .regen-btn:hover { background: #7c3aed; color: #fff; }
+        .regen-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.15); color: #9ca3af;
+            font-weight: 500; padding: 0.75rem 1.5rem; border-radius: 0.75rem;
+            text-decoration: none; transition: all 0.2s; font-size: 0.95rem;
+        }
+        .back-btn:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+
+        /* Empty state */
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6rem 0; text-align: center; }
+        .empty-state h2 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #f1f0f8; margin-bottom: 0.75rem; }
+        .empty-state p { color: #9ca3af; font-size: 1.1rem; max-width: 28rem; }
+
+        /* Spinner */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            width: 20px; height: 20px;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Footer */
+        .footer { border-top: 1px solid rgba(255,255,255,0.07); padding: 2rem 0; }
+        .footer-inner { max-width: 1152px; margin: 0 auto; padding: 0 1.5rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+        .footer-logo { font-family: 'Playfair Display', serif; color: #a78bfa; font-weight: 700; }
+        .footer-copy { color: #4b5563; font-size: 0.875rem; }
+        .footer-links { display: flex; gap: 1.5rem; }
+        .footer-links a { color: #6b7280; font-size: 0.875rem; text-decoration: none; transition: color 0.2s; }
+        .footer-links a:hover { color: #d1d5db; }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-8">
-        <h1 class="text-3xl text-gray-800 mb-6">Story Detail</h1>
-        <div class="mb-4">
-            <p class="text-gray-700"><strong class="font-bold">ID:</strong> {{ story.id }}</p>
-            <p class="text-gray-700"><strong class="font-bold">Idea:</strong> {{ story.idea }}</p>
-            <p class="text-gray-700"><strong class="font-bold">Genre:</strong> {{ story.genre }}</p>
-            <p class="text-gray-700"><strong class="font-bold">Unique Insight:</strong> {{ story.unique_insight }}</p>
-            <p class="text-gray-700"><strong class="font-bold">Structure:</strong> {{ story.structure }}</p>
-            <p class="text-gray-700"><strong class="font-bold">Number of Characters:</strong> {{ story.number_of_characters }}</p>
-            <p class="text-gray-700"><strong class="font-bold">Point of View:</strong> {{ story.point_of_view }}</p>
-        </div>
-        {% if story.story %}
-            <div>
-                <p class="text-gray-700 font-bold mb-2">Generated Story:</p>
-                <p class="text-gray-700">{{ story.story }}</p>
+<body>
+
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo">StoryForge</a>
+            <div class="nav-links">
+                <a href="/stories" class="nav-link">Browse Stories</a>
+                <a href="/create" class="nav-btn">Create Story</a>
             </div>
-        {% else %}
-            <form action="/stories/{{ story.id }}/generate" method="post" class="mt-6">
-                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Generate Story</button>
-            </form>
-        {% endif %}
-        <a href="/stories" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block mt-4">Back to List</a>
+        </div>
+    </nav>
+
+    <div class="page-wrap">
+
+        <a href="/stories" class="back-link">← Back to Stories</a>
+
+        <div class="content-grid">
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="meta-card">
+                    <p class="meta-header">Story Details</p>
+
+                    <div>
+                        <p class="meta-label">Idea</p>
+                        <p class="meta-value">{{ story.idea }}</p>
+                    </div>
+
+                    <div class="meta-section">
+                        <p class="meta-label">Genre</p>
+                        <span class="genre-badge">{{ story.genre }}</span>
+                    </div>
+
+                    <div class="meta-section">
+                        <p class="meta-label">Unique Insight</p>
+                        <p class="meta-value">{{ story.unique_insight }}</p>
+                    </div>
+
+                    <div class="meta-section">
+                        <p class="meta-label">Structure</p>
+                        <p class="meta-value">{{ story.structure }}</p>
+                    </div>
+
+                    <div class="meta-section meta-grid">
+                        <div>
+                            <p class="meta-label">Characters</p>
+                            <p class="meta-value" style="font-weight:600;">{{ story.number_of_characters }}</p>
+                        </div>
+                        <div>
+                            <p class="meta-label">Point of View</p>
+                            <p class="meta-value">{{ story.point_of_view }}</p>
+                        </div>
+                    </div>
+
+                    {% if not story.story %}
+                    <form action="/stories/{{ story.id }}/generate" method="post" id="generate-form">
+                        <button type="submit" class="generate-btn" id="generate-btn">
+                            <span id="btn-text">✨ Generate Story</span>
+                            <span class="spinner" id="btn-spinner"></span>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </aside>
+
+            <!-- Story -->
+            <main class="story-main story-body">
+                {% if story.story %}
+
+                    <h1 class="story-title">{{ story.idea }}</h1>
+
+                    <div id="story-content">
+                        {% set paragraphs = story.story.split('\n') %}
+                        {% for para in paragraphs %}
+                            {% if para.strip() %}
+                                {% if para.strip().startswith('Chapter') or para.strip().startswith('CHAPTER') or para.strip().startswith('Part') or para.strip().startswith('PART') %}
+                                    <h2>{{ para.strip() }}</h2>
+                                {% else %}
+                                    <p>{{ para.strip() }}</p>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="story-actions">
+                        <form action="/stories/{{ story.id }}/generate" method="post" id="regenerate-form">
+                            <button type="submit" class="regen-btn" id="regenerate-btn">
+                                <span id="regen-text">↺ Regenerate</span>
+                                <span class="spinner" id="regen-spinner"></span>
+                            </button>
+                        </form>
+                        <a href="/stories" class="back-btn">← All Stories</a>
+                    </div>
+
+                {% else %}
+                    <div class="empty-state">
+                        <div style="font-size:4rem; margin-bottom:1.5rem;">✍️</div>
+                        <h2>Ready to write</h2>
+                        <p>Your story parameters are saved. Hit "Generate Story" to bring it to life.</p>
+                    </div>
+                {% endif %}
+            </main>
+
+        </div>
     </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <span class="footer-logo">StoryForge</span>
+            <p class="footer-copy">Built with FastAPI &amp; Amazon Bedrock</p>
+            <div class="footer-links">
+                <a href="/create">Create</a>
+                <a href="/stories">Stories</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const generateForm = document.getElementById('generate-form');
+        if (generateForm) {
+            generateForm.addEventListener('submit', () => {
+                document.getElementById('btn-text').textContent = 'Generating...';
+                document.getElementById('btn-spinner').style.display = 'block';
+                document.getElementById('generate-btn').disabled = true;
+            });
+        }
+        const regenerateForm = document.getElementById('regenerate-form');
+        if (regenerateForm) {
+            regenerateForm.addEventListener('submit', () => {
+                document.getElementById('regen-text').textContent = 'Regenerating...';
+                document.getElementById('regen-spinner').style.display = 'block';
+                document.getElementById('regenerate-btn').disabled = true;
+            });
+        }
+    </script>
+
 </body>
 </html>

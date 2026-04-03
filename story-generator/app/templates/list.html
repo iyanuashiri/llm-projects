@@ -3,35 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story List</title>
+    <title>Stories — StoryForge</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .hero-title { font-family: 'Playfair Display', serif; }
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .genre-badge {
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-8">
-        <h1 class="text-3xl text-gray-800 mb-6">Story List</h1>
-        <table class="table-auto w-full">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="px-4 py-2 text-left">ID</th>
-                    <th class="px-4 py-2 text-left">Idea</th>
-                    <th class="px-4 py-2 text-left">Genre</th>
-                    <th class="px-4 py-2">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for story in stories %}
-                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="px-4 py-2">{{ story.id }}</td>
-                    <td class="px-4 py-2">{{ story.idea }}</td>
-                    <td class="px-4 py-2">{{ story.genre }}</td>
-                    <td class="px-4 py-2">
-                        <a href="/stories/{{ story.id }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">View</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <a href="/create" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-block mt-4">Create New Story</a>
+<body class="bg-gray-950 text-white min-h-screen">
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 bg-gray-950 bg-opacity-80 backdrop-filter backdrop-blur-lg border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="hero-title text-xl font-bold text-purple-400">StoryForge</a>
+            <div class="flex gap-4">
+                <a href="/stories" class="text-white text-sm font-medium">Browse Stories</a>
+                <a href="/create" class="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                    Create Story
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-6 pt-32 pb-24">
+
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
+            <div>
+                <h1 class="hero-title text-4xl font-bold mb-2">All Stories</h1>
+                <p class="text-gray-400">
+                    {% if stories %}
+                        {{ stories | length }} stor{{ "y" if stories | length == 1 else "ies" }} generated
+                    {% else %}
+                        No stories yet
+                    {% endif %}
+                </p>
+            </div>
+            <a href="/create"
+               class="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors self-start sm:self-auto">
+                + Create New Story
+            </a>
+        </div>
+
+        <!-- Stories Grid -->
+        {% if stories %}
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for story in stories %}
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-hover flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="genre-badge text-purple-300 text-xs font-medium px-3 py-1 rounded-full">
+                            {{ story.genre }}
+                        </span>
+                        <span class="text-gray-600 text-xs">#{{ story.id }}</span>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed line-clamp-4">
+                        {{ story.idea }}
+                    </p>
+                </div>
+                <a href="/stories/{{ story.id }}"
+                   class="mt-6 w-full text-center bg-gray-800 hover:bg-purple-600 border border-gray-700 hover:border-purple-500 text-gray-300 hover:text-white text-sm font-medium py-2.5 rounded-xl transition-all">
+                    Read Story →
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <!-- Empty state -->
+        <div class="flex flex-col items-center justify-center py-32 text-center">
+            <div class="text-6xl mb-6">📭</div>
+            <h2 class="hero-title text-3xl font-bold mb-3">No stories yet</h2>
+            <p class="text-gray-400 text-lg mb-8 max-w-md">Be the first to create one. It only takes a few seconds.</p>
+            <a href="/create"
+               class="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-all transform hover:scale-105">
+                Create Your First Story →
+            </a>
+        </div>
+        {% endif %}
+
     </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-8">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span class="hero-title text-purple-400 font-bold">StoryForge</span>
+            <p class="text-gray-600 text-sm">Built with FastAPI &amp; Amazon Bedrock</p>
+            <div class="flex gap-6 text-sm text-gray-500">
+                <a href="/create" class="hover:text-gray-300 transition-colors">Create</a>
+                <a href="/stories" class="hover:text-gray-300 transition-colors">Stories</a>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>

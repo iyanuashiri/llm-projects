@@ -3,57 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Story</title>
+    <title>Create Story — StoryForge</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .hero-title { font-family: 'Playfair Display', serif; }
+        .form-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+        }
+        .spinner {
+            border: 3px solid rgba(167,139,250,0.2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-8">
-        <h1 class="text-3xl text-gray-800 mb-6">Create a New Story</h1>
-        <form method="POST" class="w-full max-w-lg">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="idea">Idea:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" id="idea" name="idea" required>
+<body class="bg-gray-950 text-white min-h-screen">
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 bg-gray-950 bg-opacity-80 backdrop-filter backdrop-blur-lg border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="hero-title text-xl font-bold text-purple-400">StoryForge</a>
+            <div class="flex gap-4">
+                <a href="/stories" class="text-gray-400 hover:text-white text-sm transition-colors">Browse Stories</a>
+                <a href="/create" class="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                    Create Story
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-2xl mx-auto px-6 pt-28 pb-24">
+
+        <a href="/" class="inline-flex items-center gap-2 text-gray-500 hover:text-gray-300 text-sm mb-8 transition-colors">
+            ← Back to Home
+        </a>
+
+        <div class="mb-10">
+            <h1 class="hero-title text-4xl font-bold mb-3">Create a Story</h1>
+            <p class="text-gray-400">Fill in the details below and we'll generate a full story for you.</p>
+        </div>
+
+        <form method="POST" action="/create" id="create-form" class="space-y-6">
+
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2" for="idea">Story Idea</label>
+                <textarea
+                    class="form-input w-full rounded-xl px-4 py-3 text-white placeholder-gray-600 resize-none"
+                    id="idea" name="idea" rows="3"
+                    placeholder="e.g. A detective who can hear the last thoughts of murder victims..."
+                    required></textarea>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="genre">Genre:</label>
-                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="genre" name="genre" required>
-                    {% for genre_choice in genre_choices %}
-                        <option value="{{ genre_choice.value }}">{{ genre_choice.value }}</option>
-                    {% endfor %}
-                </select>
+            <div class="grid sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2" for="genre">Genre</label>
+                    <select class="form-input w-full rounded-xl px-4 py-3 text-white" id="genre" name="genre" required>
+                        {% for genre_choice in genre_choices %}
+                            <option value="{{ genre_choice.value }}">{{ genre_choice.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2" for="structure">Structure</label>
+                    <select class="form-input w-full rounded-xl px-4 py-3 text-white" id="structure" name="structure" required>
+                        {% for structure_choice in structure_choices %}
+                            <option value="{{ structure_choice.value }}">{{ structure_choice.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="unique_insight">Unique Insight:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" id="unique_insight" name="unique_insight" required>
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2" for="unique_insight">Unique Insight</label>
+                <input
+                    class="form-input w-full rounded-xl px-4 py-3 text-white placeholder-gray-600"
+                    type="text" id="unique_insight" name="unique_insight"
+                    placeholder="e.g. The real monster is grief, not the creature"
+                    required>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="structure">Structure:</label>
-                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="structure" name="structure" required>
-                    {% for structure_choice in structure_choices %}
-                        <option value="{{ structure_choice.value }}">{{ structure_choice.value }}</option>
-                    {% endfor %}
-                </select>
+            <div class="grid sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2" for="number_of_characters">Number of Characters</label>
+                    <input
+                        class="form-input w-full rounded-xl px-4 py-3 text-white placeholder-gray-600"
+                        type="number" id="number_of_characters" name="number_of_characters"
+                        min="1" max="20" placeholder="3"
+                        required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2" for="point_of_view">Point of View</label>
+                    <select class="form-input w-full rounded-xl px-4 py-3 text-white" id="point_of_view" name="point_of_view" required>
+                        {% for pov_choice in point_of_view_choices %}
+                            <option value="{{ pov_choice.value }}">{{ pov_choice.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="number_of_characters">Number of Characters:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" id="number_of_characters" name="number_of_characters" required>
+            <div class="pt-2">
+                <button type="submit" id="submit-btn"
+                    class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-4 rounded-xl text-lg transition-all transform hover:scale-105 flex items-center justify-center gap-3">
+                    <span id="btn-text">✨ Generate My Story</span>
+                    <span id="btn-spinner" class="spinner hidden"></span>
+                </button>
+                <p class="text-center text-gray-600 text-sm mt-3">This may take a few seconds</p>
             </div>
 
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="point_of_view">Point of View:</label>
-                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="point_of_view" name="point_of_view" required>
-                    {% for pov_choice in point_of_view_choices %}
-                        <option value="{{ pov_choice.value }}">{{ pov_choice.value }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save Story Idea</button>
         </form>
     </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-8">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span class="hero-title text-purple-400 font-bold">StoryForge</span>
+            <p class="text-gray-600 text-sm">Built with FastAPI &amp; Amazon Bedrock</p>
+            <div class="flex gap-6 text-sm text-gray-500">
+                <a href="/create" class="hover:text-gray-300 transition-colors">Create</a>
+                <a href="/stories" class="hover:text-gray-300 transition-colors">Stories</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('create-form').addEventListener('submit', () => {
+            document.getElementById('btn-text').textContent = 'Generating your story...';
+            document.getElementById('btn-spinner').classList.remove('hidden');
+            document.getElementById('submit-btn').disabled = true;
+        });
+    </script>
+
 </body>
 </html>

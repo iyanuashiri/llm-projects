@@ -1,16 +1,9 @@
-from typing import Annotated, List
-from datetime import timedelta
-import os
+from typing import Annotated
 
 from fastapi import FastAPI, Depends, status, HTTPException, Form, Request
-from fastapi.security import OAuth2PasswordBearer
-# from fastapi.templating import Jinja2Templates
-# from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlmodel import Session, select   
-from sqlalchemy.orm import selectinload
+from sqlmodel import Session, select
 from starlette.templating import Jinja2Templates
-from starlette.staticfiles import StaticFiles
 
 
 from . import models
@@ -22,12 +15,6 @@ SessionDep = Annotated[Session, Depends(get_session)]
 
 
 app = FastAPI()
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-script_dir = os.path.dirname(__file__)
-st_abs_file_path = os.path.join(script_dir, "static/")
-app.mount("/static", StaticFiles(directory=st_abs_file_path), name="static")
 
 templates = Jinja2Templates(directory="app/templates")
 
@@ -56,10 +43,6 @@ async def create_story_form(request: Request):
             "point_of_view_choices": point_of_view_choices
         }
     )
-
-# @app.get("/create", response_class=HTMLResponse)
-# async def create_story_form(request: Request):
-#     return templates.TemplateResponse("create.html", {"request": request})
 
 
 @app.post("/create")
@@ -97,31 +80,6 @@ async def create_story(
     return RedirectResponse(url=f"/stories/{story.id}", status_code=status.HTTP_303_SEE_OTHER)
 
 
-# @app.post("/create")
-# async def create_story(
-#     request: Request,
-#     session: SessionDep,
-#     idea: str = Form(...),
-#     genre: str = Form(...),
-#     unique_insight: str = Form(...),
-#     structure: str = Form(...),
-#     number_of_characters: int = Form(...),
-#     point_of_view: str = Form(...),
-# ):
-#     story = models.Story(
-#         idea=idea,
-#         genre=genre,
-#         unique_insight=unique_insight,
-#         structure=structure,
-#         number_of_characters=number_of_characters,
-#         point_of_view=point_of_view,
-#     )
-#     session.add(story)
-#     session.commit()
-#     session.refresh(story)
-#     return RedirectResponse(url=f"/stories/{story.id}", status_code=status.HTTP_303_SEE_OTHER)
-
-
 @app.get("/stories", response_class=HTMLResponse)
 async def list_stories(request: Request, session: SessionDep):
     stories = session.exec(select(models.Story)).all()
@@ -143,6 +101,7 @@ async def detail_story(request: Request, session: SessionDep, story_id: int):
         structure=story.structure,
         number_of_characters=story.number_of_characters,
         point_of_view=story.point_of_view,
+        story=story.story
     )
 
     return templates.TemplateResponse("detail.html", {"request": request, "story": story_response})
@@ -154,15 +113,21 @@ async def generate_story(request: Request, session: SessionDep, story_id: int):
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
 
-    # generated_story = await generate_story_content(
-    #     idea=story.idea,
-    #     genre=story.genre,
-    #     unique_insight=story.unique_insight,
-    #     structure=story.structure,
-    #     number_of_characters=story.number_of_characters,
-    #     point_of_view=story.point_of_view
-    # )
-    
+    generated_story = await generate_story_content(
+        idea=story.idea,
+        genre=story.genre,
+        unique_insight=story.unique_insight,
+        structure=story.structure,
+        number_of_characters=story.number_of_characters,
+        point_of_view=story.point_of_view
+    )
+
+    if generated_story:
+        story.story = generated_story.story
+        session.add(story)
+        session.commit()
+        session.refresh(story)
+
     story_response = StoryDetailResponse(
         id=story.id,
         idea=story.idea,
