@@ -26,7 +26,7 @@ def on_startup():
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
+    return templates.TemplateResponse(request, "home.html")
 
 
 @app.get("/create", response_class=HTMLResponse)
@@ -34,10 +34,9 @@ async def create_story_form(request: Request):
     genre_choices = list(models.Genre)
     structure_choices = list(models.Structure)
     point_of_view_choices = list(models.PointOfView)
-    return templates.TemplateResponse(
+    return templates.TemplateResponse(request,
         "create.html", 
         {
-            "request": request, 
             "genre_choices": genre_choices, 
             "structure_choices": structure_choices, 
             "point_of_view_choices": point_of_view_choices
@@ -84,7 +83,7 @@ async def create_story(
 async def list_stories(request: Request, session: SessionDep):
     stories = session.exec(select(models.Story)).all()
     stories_response = [StoryListResponse(id=story.id, idea=story.idea, genre=story.genre) for story in stories]
-    return templates.TemplateResponse("list.html", {"request": request, "stories": stories_response})
+    return templates.TemplateResponse(request, "list.html", {"stories": stories_response})
 
 
 @app.get("/stories/{story_id}", response_class=HTMLResponse)
@@ -104,7 +103,7 @@ async def detail_story(request: Request, session: SessionDep, story_id: int):
         story=story.story
     )
 
-    return templates.TemplateResponse("detail.html", {"request": request, "story": story_response})
+    return templates.TemplateResponse(request, "detail.html", {"story": story_response})
 
 
 @app.post("/stories/{story_id}/generate", response_class=HTMLResponse)
@@ -139,4 +138,4 @@ async def generate_story(request: Request, session: SessionDep, story_id: int):
         story=story.story
     )
 
-    return templates.TemplateResponse("detail.html", {"request": request, "story": story_response})
+    return templates.TemplateResponse(request, "detail.html", {"story": story_response})
