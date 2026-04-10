@@ -1,0 +1,10 @@
+[project]
+name = "frankfurter-mcp"
+version = "0.1.0"
+description = "Frankfurter MCP — currency conversion via api.frankfurter.dev v1 (no API key)"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.27.0",
+]
