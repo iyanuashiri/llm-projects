@@ -1,78 +1,48 @@
-import asyncio
-from typing import Annotated, Union
-import time
-
-from fastapi import FastAPI, status, Form, Header, Response, Body
+from fastapi import FastAPI, status, Response
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from .prompts import extract_job_information, extract_job_urls
-from .scraper import WebScraper
-from .utils import fix_url, remove_html_tags
+from app.prompts1 import extract_job_information, extract_job_urls
+from app.scraper1 import scrape_webpage
+from app.utils import fix_url, remove_html_tags
 
 app = FastAPI()
-
-origins = [
-    "http://localhost:3000",
-]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    # allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-
 )
 
 
 class URL(BaseModel):
     url: str
-    
+
 
 @app.post("/jobs/", status_code=status.HTTP_201_CREATED)
 async def scrape_job_description(url: URL, response: Response):
-    
-    url = url.url
-    
-    scraper1 = WebScraper(url=url, is_paginated=True)
-    documents = await scraper1.scrape()
-    page_tasks = []
-    for document in documents:
-        page_tasks.append(extract_job_urls(home_page_html_document=document))
-    items = await asyncio.gather(*page_tasks)
+    documents = await scrape_webpage(url=url.url, is_paginated=True)
 
     total_urls = []
-    for item in items:
-        for url_object in item:
+    for document in documents:
+        results = await extract_job_urls(home_page_html_document=document)
+        for url_object in results:
             if url_object.urls is None:
                 response.status_code = status.HTTP_400_BAD_REQUEST
                 return {"data": "Error", "status": status.HTTP_400_BAD_REQUEST, "message": "The career page is empty. Nothing to scrape."}
             total_urls.extend(url_object.urls)
-           
-        
-    tasks = []
-    for url in total_urls:
-        if 'https://' in url:
-            scraper2 = WebScraper(url=url)
-            documents = await scraper2.scrape()
-            soup = remove_html_tags(documents[0])
-            tasks.append(extract_job_information(html_document=soup, apply_url=url))
-        else:
-            fixed_url = fix_url(url=url)
-            scraper2 = WebScraper(url=fixed_url)
-            documents = await scraper2.scrape()
-            soup = remove_html_tags(documents[0])
-            tasks.append(extract_job_information(html_document=soup, apply_url=fixed_url))
 
-    
-    list_of_tasks = await asyncio.gather(*tasks)
-        
     cleaned_list = []
-    for job_list in list_of_tasks:
-        for job_info in job_list:
-            cleaned_list.append(job_info)
-        
-    return {"data": cleaned_list, "status": status.HTTP_201_CREATED}
-    
+    for job_url in total_urls:
+        target_url = job_url if 'https://' in job_url else fix_url(url=job_url)
+        docs = await scrape_webpage(url=target_url)
+        soup = remove_html_tags(docs[0])
+        job_results = await extract_job_information(
+            html_document=soup, apply_url=target_url
+        )
+        for job_info in job_results:
+            if job_info is not None:
+                cleaned_list.append(job_info)
 
+    return {"data": cleaned_list, "status": status.HTTP_201_CREATED}
