@@ -18,7 +18,7 @@ A FastAPI service that scrapes job listings from a company careers page and extr
 2. `cd job-scraper`
 3. `uv sync`
 4. `uv run playwright install`
-5. Run the API server `uv run python run.py`
+5. Run the API server `uv run python run.py` or `uv run uvicorn app.main:app`
 6. In a separate terminal, run the Gradio UI `uv run python gradio_app.py`
 
 ### virtual environment
