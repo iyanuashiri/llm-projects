@@ -1,4 +1,3 @@
-import json
 import requests
 import gradio as gr
 
@@ -11,7 +10,7 @@ def scrape_jobs(url: str):
         return "Please enter a URL.", None
 
     try:
-        response = requests.post(API_URL, json={"url": url.strip()}, timeout=120)
+        response = requests.post(API_URL, json={"url": url.strip()})
         response.raise_for_status()
     except requests.exceptions.ConnectionError:
         return "Could not connect to the API. Make sure the FastAPI server is running on http://localhost:8000.", None
@@ -22,22 +21,37 @@ def scrape_jobs(url: str):
 
     data = response.json()
 
+    if not isinstance(data, dict):
+        return (
+            f"Unexpected API response (expected a JSON object). Got {type(data).__name__}.",
+            None,
+        )
+
     if data.get("status") == 400:
         return data.get("message", "No jobs found."), None
 
-    jobs = data.get("data", [])
+    jobs = data.get("data") or []
+    if not isinstance(jobs, list):
+        jobs = []
+
     if not jobs:
         return "No job listings found on that page.", None
 
-    # Build table rows
     rows = []
     for job in jobs:
+        if not isinstance(job, dict):
+            continue
+        desc = job.get("job_description") or ""
+        preview = (desc[:300] + "...") if desc else "—"
         rows.append([
             job.get("job_title") or "—",
             job.get("company_name") or "—",
-            job.get("job_description", "")[:300] + "..." if job.get("job_description") else "—",
+            preview,
             job.get("apply_url") or "—",
         ])
+
+    if not rows:
+        return "No job listings found on that page.", None
 
     status_msg = f"Found {len(rows)} job listing{'s' if len(rows) != 1 else ''}."
     return status_msg, rows
