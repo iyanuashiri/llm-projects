@@ -17,15 +17,14 @@ def get_client():
 def _call_model(prompt: str, max_tokens: int = 2048) -> str:
     client = get_client()
     response = client.converse(
-        modelId="us.amazon.nova-lite-v1:0",
+        modelId="global.amazon.nova-2-lite-v1:0",
         messages=[{
             "role": "user",
             "content": [{"text": prompt}]
         }],
-        inferenceConfig={"maxTokens": max_tokens, "temperature": 0.0}
+        # inferenceConfig={"maxTokens": max_tokens, "temperature": 0.0}
     )
     raw = response["output"]["message"]["content"][0]["text"].strip()
-    # Strip markdown fences if present
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -44,6 +43,7 @@ Return a JSON object in this exact format:
   "urls": ["https://example.com/job/1", "https://example.com/job/2"]
 }}
 
+Only include URLs that link to individual job listings (not category pages, filters, or external sites).
 If no URLs are found, return: {{"urls": []}}
 Return ONLY the JSON object. No explanation, no markdown.
 """
@@ -57,7 +57,7 @@ HTML Document:
 
 Extract the following fields:
 - job_title: the title of the job position
-- job_description: full job description with all HTML tags removed (plain text only)
+- job_description: full job description as plain text (no HTML tags)
 - company_name: name of the hiring company
 - company_website: company website URL if present, otherwise null
 - apply_url: use the apply URL provided above
@@ -75,20 +75,32 @@ Return ONLY the JSON object. No explanation, no markdown.
 """
 
 
-async def extract_job_urls(home_page_html_document: str) -> list[JobInformationURL]:
+def extract_job_urls(home_page_html_document: str) -> list[JobInformationURL]:
     prompt = EXTRACT_URLS_TEMPLATE.format(
         home_page_html_document=home_page_html_document
     )
-    raw = _call_model(prompt, max_tokens=1024)
-    parsed = json.loads(raw)
-    return [JobInformationURL(**parsed)]
+    try:
+        raw = _call_model(prompt, max_tokens=4096)
+        parsed = json.loads(raw)
+        return [JobInformationURL(**parsed)]
+    except (json.JSONDecodeError, Exception):
+        return [JobInformationURL(urls=[])]
 
 
-async def extract_job_information(html_document: str, apply_url: str) -> list[JobInformationSchema]:
+def extract_job_information(html_document: str, apply_url: str) -> list[JobInformationSchema]:
     prompt = EXTRACT_JOB_INFO_TEMPLATE.format(
         html_document=html_document,
         apply_url=apply_url
     )
-    raw = _call_model(prompt, max_tokens=4096)
-    parsed = json.loads(raw)
-    return [JobInformationSchema(**parsed)]
+    try:
+        raw = _call_model(prompt, max_tokens=4096)
+        parsed = json.loads(raw)
+        return [JobInformationSchema(**parsed)]
+    except (json.JSONDecodeError, Exception):
+        return [JobInformationSchema(
+            job_title=None,
+            job_description=None,
+            company_name=None,
+            company_website=None,
+            apply_url=apply_url
+        )]
