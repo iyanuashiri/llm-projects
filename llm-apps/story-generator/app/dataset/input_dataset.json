@@ -1,0 +1,218 @@
+[
+  {
+    "id": 1,
+    "idea": "A street urchin steals a map that only reveals its path when the holder tells a genuine truth.",
+    "genre": "Fantasy",
+    "unique_insight": "Vulnerability is often the only real compass we have.",
+    "structure": "Linear",
+    "number_of_characters": 3,
+    "point_of_view": "First Person"
+  },
+  {
+    "id": 2,
+    "idea": "You recount the fall of the Elven empire to the human scribe who will eventually write you out of history.",
+    "genre": "Fantasy",
+    "unique_insight": "History is not what happened, but what is permitted to be remembered.",
+    "structure": "Nonlinear",
+    "number_of_characters": 2,
+    "point_of_view": "Second Person"
+  },
+  {
+    "id": 3,
+    "idea": "A lone trader visits deep-space outposts, bartering emotional memories instead of currency.",
+    "genre": "Science Fiction",
+    "unique_insight": "The most valuable commodity in a mechanized universe is human feeling.",
+    "structure": "Episodic",
+    "number_of_characters": 5,
+    "point_of_view": "Third Person Limited"
+  },
+  {
+    "id": 4,
+    "idea": "Humanity's first faster-than-light ship arrives at its destination only to find ruins built by their own descendants.",
+    "genre": "Science Fiction",
+    "unique_insight": "Running from the present only traps you in the inevitability of the future.",
+    "structure": "Three-Act Structure",
+    "number_of_characters": 4,
+    "point_of_view": "Third Person Omniscient"
+  },
+  {
+    "id": 5,
+    "idea": "A locked-room murder occurs on a bullet train, but the victim is found holding a confession to a different murder.",
+    "genre": "Mystery",
+    "unique_insight": "Guilt has a way of compounding itself until the original sin is obscured.",
+    "structure": "Five-Act Structure",
+    "number_of_characters": 6,
+    "point_of_view": "Third Person Objective"
+  },
+  {
+    "id": 6,
+    "idea": "A disgraced detective realizes the serial killer they are tracking is targeting the corrupt cops who framed them.",
+    "genre": "Mystery",
+    "unique_insight": "Sometimes justice looks indistinguishable from vengeance.",
+    "structure": "Hero's Journey",
+    "number_of_characters": 4,
+    "point_of_view": "First Person"
+  },
+  {
+    "id": 7,
+    "idea": "You have exactly twenty-four hours to navigate a foreign city and deliver a cipher before your biometric pacemaker detonates.",
+    "genre": "Thriller",
+    "unique_insight": "Urgency strips away all illusions of control.",
+    "structure": "Save the Cat!",
+    "number_of_characters": 3,
+    "point_of_view": "Second Person"
+  },
+  {
+    "id": 8,
+    "idea": "A deep-cover operative is burned by her agency and must dismantle the syndicate she spent five years building.",
+    "genre": "Thriller",
+    "unique_insight": "The masks we wear for survival often become our permanent faces.",
+    "structure": "Linear",
+    "number_of_characters": 5,
+    "point_of_view": "Third Person Limited"
+  },
+  {
+    "id": 9,
+    "idea": "Two timelines intersect: a couple falling in love in 1999, and their bitter divorce proceedings in 2024.",
+    "genre": "Romance",
+    "unique_insight": "The traits that draw us together are often the exact things that eventually tear us apart.",
+    "structure": "Nonlinear",
+    "number_of_characters": 2,
+    "point_of_view": "Third Person Omniscient"
+  },
+  {
+    "id": 10,
+    "idea": "A series of accidental meetings at an airport lounge over ten years slowly shifts two rivals into lovers.",
+    "genre": "Romance",
+    "unique_insight": "Love is often just proximity, time, and shared exhaustion.",
+    "structure": "Episodic",
+    "number_of_characters": 4,
+    "point_of_view": "Third Person Objective"
+  },
+  {
+    "id": 11,
+    "idea": "A family moves into a pristine, modernized smart-home that actively tries to optimize their behaviors through psychological torture.",
+    "genre": "Horror",
+    "unique_insight": "The desire for absolute convenience is the invitation for absolute control.",
+    "structure": "Three-Act Structure",
+    "number_of_characters": 4,
+    "point_of_view": "First Person"
+  },
+  {
+    "id": 12,
+    "idea": "You discover your reflection is delayed by half a second, and it is planning to drag you into the mirror.",
+    "genre": "Horror",
+    "unique_insight": "The most terrifying monsters are the parts of ourselves we refuse to acknowledge.",
+    "structure": "Five-Act Structure",
+    "number_of_characters": 1,
+    "point_of_view": "Second Person"
+  },
+  {
+    "id": 13,
+    "idea": "A WW1 trench runner must carry an order to call off an attack, but is hindered by mutinous soldiers who want the glory of the charge.",
+    "genre": "Historical Fiction",
+    "unique_insight": "Pride is a more effective slaughterer than enemy artillery.",
+    "structure": "Hero's Journey",
+    "number_of_characters": 6,
+    "point_of_view": "Third Person Limited"
+  },
+  {
+    "id": 14,
+    "idea": "The court of Henry VIII, viewed through the hidden machinations of the royal tailors sewing coded messages into garments.",
+    "genre": "Historical Fiction",
+    "unique_insight": "Power does not reside on the throne, but in the hands of those who dress the monarch.",
+    "structure": "Save the Cat!",
+    "number_of_characters": 5,
+    "point_of_view": "Third Person Omniscient"
+  },
+  {
+    "id": 15,
+    "idea": "A fiercely independent chef tries to save their failing restaurant while refusing any help from their wealthy family.",
+    "genre": "Contemporary",
+    "unique_insight": "Stubbornness is just fear wearing a mask of independence.",
+    "structure": "Linear",
+    "number_of_characters": 3,
+    "point_of_view": "Third Person Objective"
+  },
+  {
+    "id": 16,
+    "idea": "An aging defense attorney reflects on the three cases they won that they wish they had lost.",
+    "genre": "Contemporary",
+    "unique_insight": "Professional success and moral bankruptcy can look identical from the outside.",
+    "structure": "Nonlinear",
+    "number_of_characters": 4,
+    "point_of_view": "First Person"
+  },
+  {
+    "id": 17,
+    "idea": "You must navigate a deadly, unmapped jungle canopy relying only on the field notes of the explorer who betrayed you.",
+    "genre": "Action/Adventure",
+    "unique_insight": "Survival requires trusting the logic of your enemies.",
+    "structure": "Episodic",
+    "number_of_characters": 2,
+    "point_of_view": "Second Person"
+  },
+  {
+    "id": 18,
+    "idea": "A crew of specialized thieves robs a seed vault during a global agricultural crisis.",
+    "genre": "Action/Adventure",
+    "unique_insight": "True wealth isn't gold or data, but the promise of tomorrow's harvest.",
+    "structure": "Three-Act Structure",
+    "number_of_characters": 5,
+    "point_of_view": "Third Person Limited"
+  },
+  {
+    "id": 19,
+    "idea": "A rigid society enforces mandatory memory-wipes every five years, until one citizen's toddler begins singing a banned lullaby.",
+    "genre": "Dystopian",
+    "unique_insight": "Human attachment cannot be completely eradicated by systemic erasure.",
+    "structure": "Five-Act Structure",
+    "number_of_characters": 3,
+    "point_of_view": "Third Person Omniscient"
+  },
+  {
+    "id": 20,
+    "idea": "A specialized courier delivers unmonitored analog letters across a surveillance-state metropolis.",
+    "genre": "Dystopian",
+    "unique_insight": "In a world of total visibility, privacy becomes the ultimate act of rebellion.",
+    "structure": "Hero's Journey",
+    "number_of_characters": 4,
+    "point_of_view": "Third Person Objective"
+  },
+  {
+    "id": 21,
+    "idea": "I live in a coastal town where spoken lies turn into heavy stones in the liar's mouth.",
+    "genre": "Magical Realism",
+    "unique_insight": "Deceit carries a physical weight that eventually suffocates the deceiver.",
+    "structure": "Save the Cat!",
+    "number_of_characters": 3,
+    "point_of_view": "First Person"
+  },
+  {
+    "id": 22,
+    "idea": "You realize that flowers grow from your footsteps only when you are walking away from someone who loves you.",
+    "genre": "Magical Realism",
+    "unique_insight": "Growth and beauty often stem from profound heartbreak and abandonment.",
+    "structure": "Linear",
+    "number_of_characters": 2,
+    "point_of_view": "Second Person"
+  },
+  {
+    "id": 23,
+    "idea": "A high-stakes Westminster dog show descends into chaos when a wolf accidentally infiltrates the poodle category.",
+    "genre": "Comedy",
+    "unique_insight": "Pretension crumbles the moment genuine wilderness enters the room.",
+    "structure": "Nonlinear",
+    "number_of_characters": 6,
+    "point_of_view": "Third Person Limited"
+  },
+  {
+    "id": 24,
+    "idea": "Three college roommates attempt to dodge rent by claiming their apartment is a religious sanctuary, only to accidentally start a massive cult.",
+    "genre": "Comedy",
+    "unique_insight": "People are so desperate for meaning that they will follow literally anyone who seems confident.",
+    "structure": "Episodic",
+    "number_of_characters": 7,
+    "point_of_view": "Third Person Omniscient"
+  }
+]
