@@ -1,0 +1,8 @@
+story_generator.db
+storygenerator.db
+test.db
+*.db
+.venv/
+__pycache__/
+.pytest_cache/
+.git/

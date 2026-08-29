@@ -6,10 +6,10 @@ from sqlmodel import Session, select
 from starlette.templating import Jinja2Templates
 
 
-from . import models
-from .database import create_db_and_tables, get_session
-from .prompts import generate_story_content
-from .schemas import StoryDetailResponse, StoryListResponse
+from app.models.story import Story, Genre, PointOfView, Structure
+from app.core.database import create_db_and_tables, get_session
+from app.services.story_generator import generate_story_content
+from app.schemas.story import StoryDetailResponse, StoryListResponse
 
 SessionDep = Annotated[Session, Depends(get_session)] 
 
@@ -31,9 +31,9 @@ async def home(request: Request):
 
 @app.get("/create", response_class=HTMLResponse)
 async def create_story_form(request: Request):
-    genre_choices = list(models.Genre)
-    structure_choices = list(models.Structure)
-    point_of_view_choices = list(models.PointOfView)
+    genre_choices = list(Genre)
+    structure_choices = list(Structure)
+    point_of_view_choices = list(PointOfView)
     return templates.TemplateResponse(request,
         "create.html", 
         {
@@ -57,20 +57,20 @@ async def create_story(
 ):
     generated_story = await generate_story_content(
         idea=idea,
-        genre=models.Genre(genre),
+        genre=Genre(genre),
         unique_insight=unique_insight,
-        structure=models.Structure(structure),
+        structure=Structure(structure),
         number_of_characters=number_of_characters,
-        point_of_view=models.PointOfView(point_of_view)
+        point_of_view=PointOfView(point_of_view)
     )
     
-    story = models.Story(
+    story = Story(
         idea=idea,
-        genre=models.Genre(genre),  # Convert string to Genre enum
+        genre=Genre(genre),  # Convert string to Genre enum
         unique_insight=unique_insight,
-        structure=models.Structure(structure),  # Convert string to Structure enum
+        structure=Structure(structure),  # Convert string to Structure enum
         number_of_characters=number_of_characters,
-        point_of_view=models.PointOfView(point_of_view),  # Convert string to PointOfView enum
+        point_of_view=PointOfView(point_of_view),  # Convert string to PointOfView enum
         story=generated_story.story
     )
     session.add(story)
@@ -81,14 +81,14 @@ async def create_story(
 
 @app.get("/stories", response_class=HTMLResponse)
 async def list_stories(request: Request, session: SessionDep):
-    stories = session.exec(select(models.Story)).all()
+    stories = session.exec(select(Story)).all()
     stories_response = [StoryListResponse(id=story.id, idea=story.idea, genre=story.genre) for story in stories]
     return templates.TemplateResponse(request, "list.html", {"stories": stories_response})
 
 
 @app.get("/stories/{story_id}", response_class=HTMLResponse)
 async def detail_story(request: Request, session: SessionDep, story_id: int):
-    story = session.get(models.Story, story_id)
+    story = session.get(Story, story_id)
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
     
@@ -108,7 +108,7 @@ async def detail_story(request: Request, session: SessionDep, story_id: int):
 
 @app.post("/stories/{story_id}/generate", response_class=HTMLResponse)
 async def generate_story(request: Request, session: SessionDep, story_id: int):
-    story = session.get(models.Story, story_id)
+    story = session.get(Story, story_id)
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
 
